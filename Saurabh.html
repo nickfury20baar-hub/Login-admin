@@ -21,11 +21,14 @@
 
       font-family: Arial, sans-serif;
 
-      background:
-        linear-gradient(135deg, #111827, #1e3a8a);
+      background: linear-gradient(
+        135deg,
+        #111827,
+        #1e3a8a
+      );
     }
 
-    .login-box {
+    .box {
       width: 90%;
       max-width: 380px;
 
@@ -39,20 +42,20 @@
 
       box-shadow:
         0 20px 50px rgba(0,0,0,0.4);
-    }
-
-    h2 {
-      margin: 0;
 
       color: white;
+    }
+
+    h1,
+    h2 {
       text-align: center;
+      margin-top: 0;
     }
 
     .subtitle {
-      margin: 8px 0 20px;
-
-      color: #d1d5db;
       text-align: center;
+      color: #d1d5db;
+      margin-bottom: 20px;
     }
 
     input {
@@ -95,19 +98,16 @@
     }
 
     button {
-      cursor: pointer;
-    }
-
-    .login-btn,
-    .google-btn {
       width: 100%;
-
-      margin-top: 14px;
 
       padding: 13px;
 
+      margin-top: 12px;
+
       border: none;
       border-radius: 9px;
+
+      cursor: pointer;
 
       font-size: 15px;
       font-weight: bold;
@@ -123,14 +123,17 @@
     }
 
     .google-btn {
-      margin-top: 12px;
-
       background: white;
       color: #222;
     }
 
     .google-btn:hover {
       background: #f3f4f6;
+    }
+
+    .logout-btn {
+      background: #dc2626;
+      color: white;
     }
 
     .divider {
@@ -159,7 +162,7 @@
     }
 
     #message {
-      min-height: 22px;
+      min-height: 20px;
 
       margin-top: 15px;
 
@@ -170,14 +173,39 @@
       color: #fca5a5;
     }
 
-    .footer {
+    .success-icon {
+      width: 80px;
+      height: 80px;
+
+      margin: 0 auto 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+
+      background: #22c55e;
+
+      font-size: 45px;
+    }
+
+    .user-info {
       margin-top: 20px;
 
-      color: #cbd5e1;
+      padding: 15px;
+
+      border-radius: 10px;
+
+      background: rgba(255,255,255,0.1);
 
       text-align: center;
 
-      font-size: 12px;
+      color: #d1d5db;
+    }
+
+    .hidden {
+      display: none;
     }
   </style>
 </head>
@@ -185,9 +213,17 @@
 
 <body>
 
-  <div class="login-box">
 
-    <h2>Welcome Back</h2>
+  <!-- =================================================
+       LOGIN PAGE
+  ================================================== -->
+
+  <div
+    id="loginPage"
+    class="box"
+  >
+
+    <h1>Welcome Back</h1>
 
     <div class="subtitle">
       Sign in to continue
@@ -214,6 +250,11 @@
       <button
         id="togglePassword"
         type="button"
+        style="
+          width:auto;
+          margin:0;
+          padding:5px;
+        "
       >
         👁️
       </button>
@@ -246,362 +287,437 @@
 
     <div id="message"></div>
 
+  </div>
 
-    <div class="footer">
-      Secured with Firebase Authentication
+
+
+  <!-- =================================================
+       SUCCESS PAGE
+  ================================================== -->
+
+  <div
+    id="successPage"
+    class="box hidden"
+  >
+
+    <div class="success-icon">
+      ✓
     </div>
+
+    <h1>
+      Logged In Successfully
+    </h1>
+
+    <div class="subtitle">
+      Welcome! You have successfully
+      authenticated.
+    </div>
+
+
+    <div class="user-info">
+
+      <div>
+        Logged in as:
+      </div>
+
+      <strong id="loggedInEmail">
+        -
+      </strong>
+
+    </div>
+
+
+    <button
+      id="logoutButton"
+      class="logout-btn"
+    >
+      Logout
+    </button>
 
   </div>
 
 
-<script type="module">
 
-  /* =====================================================
-     FIREBASE IMPORTS
-  ===================================================== */
+  <!-- =================================================
+       FIREBASE
+  ================================================== -->
 
-  import {
-    initializeApp
-  } from
-  "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+  <script type="module">
 
-
-  import {
-    getAuth,
-    signInWithEmailAndPassword,
-    GoogleAuthProvider,
-    signInWithRedirect,
-    getRedirectResult
-  } from
-  "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+    import {
+      initializeApp
+    }
+    from
+    "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 
 
-  /* =====================================================
-     YOUR FIREBASE CONFIG
-  ===================================================== */
-
-  const firebaseConfig = {
-
-    apiKey:
-      "AIzaSyCcwr6vNVpoQ0Tdl8OfBM8E2MvDmwKQ3BQ",
-
-    authDomain:
-      "login-project-a90bc.firebaseapp.com",
-
-    databaseURL:
-      "https://login-project-a90bc-default-rtdb.firebaseio.com",
-
-    projectId:
-      "login-project-a90bc",
-
-    storageBucket:
-      "login-project-a90bc.firebasestorage.app",
-
-    messagingSenderId:
-      "86568965871",
-
-    appId:
-      "1:86568965871:web:e000bcfe034bdce1202d1a"
-  };
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      GoogleAuthProvider,
+      signInWithRedirect,
+      getRedirectResult,
+      signOut
+    }
+    from
+    "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 
-  /* =====================================================
-     INITIALIZE FIREBASE
-  ===================================================== */
+    /* =================================================
+       FIREBASE CONFIG
+    ================================================= */
 
-  const app =
-    initializeApp(firebaseConfig);
+    const firebaseConfig = {
 
-  const auth =
-    getAuth(app);
+      apiKey:
+        "AIzaSyCcwr6vNVpoQ0Tdl8OfBM8E2MvDmwKQ3BQ",
 
+      authDomain:
+        "login-project-a90bc.firebaseapp.com",
 
-  /* =====================================================
-     ELEMENTS
-  ===================================================== */
+      databaseURL:
+        "https://login-project-a90bc-default-rtdb.firebaseio.com",
 
-  const username =
-    document.getElementById("username");
+      projectId:
+        "login-project-a90bc",
 
-  const password =
-    document.getElementById("password");
+      storageBucket:
+        "login-project-a90bc.firebasestorage.app",
 
-  const loginButton =
-    document.getElementById("loginButton");
+      messagingSenderId:
+        "86568965871",
 
-  const googleButton =
-    document.getElementById("googleButton");
-
-  const message =
-    document.getElementById("message");
-
-  const togglePassword =
-    document.getElementById("togglePassword");
+      appId:
+        "1:86568965871:web:e000bcfe034bdce1202d1a"
+    };
 
 
-  /* =====================================================
-     MESSAGE
-  ===================================================== */
+    /* =================================================
+       INITIALIZE FIREBASE
+    ================================================= */
 
-  function showMessage(
-    text,
-    success = false
-  ) {
+    const app =
+      initializeApp(firebaseConfig);
 
-    message.textContent = text;
-
-    message.style.color =
-      success
-      ? "#86efac"
-      : "#fca5a5";
-  }
+    const auth =
+      getAuth(app);
 
 
-  /* =====================================================
-     EMAIL + PASSWORD LOGIN
-  ===================================================== */
+    /* =================================================
+       ELEMENTS
+    ================================================= */
 
-  async function attemptLogin() {
+    const loginPage =
+      document.getElementById("loginPage");
 
-    const email =
-      username.value.trim();
+    const successPage =
+      document.getElementById("successPage");
 
-    const userPassword =
-      password.value;
+    const username =
+      document.getElementById("username");
 
+    const password =
+      document.getElementById("password");
 
-    if (!email) {
+    const loginButton =
+      document.getElementById("loginButton");
 
-      showMessage(
-        "Enter your email."
+    const googleButton =
+      document.getElementById("googleButton");
+
+    const logoutButton =
+      document.getElementById("logoutButton");
+
+    const message =
+      document.getElementById("message");
+
+    const loggedInEmail =
+      document.getElementById(
+        "loggedInEmail"
       );
 
-      return;
+    const togglePassword =
+      document.getElementById(
+        "togglePassword"
+      );
+
+
+    /*
+     * Stores whether Google authentication
+     * has already succeeded.
+     */
+
+    let googleAuthenticated = false;
+
+
+    /* =================================================
+       MESSAGE
+    ================================================= */
+
+    function showMessage(
+      text,
+      success = false
+    ) {
+
+      message.textContent = text;
+
+      message.style.color =
+        success
+          ? "#86efac"
+          : "#fca5a5";
     }
 
 
-    if (!userPassword) {
+    /* =================================================
+       SHOW SUCCESS PAGE
+    ================================================= */
 
-      showMessage(
-        "Enter your password."
-      );
+    function showSuccessPage(user) {
 
-      return;
+      loginPage.classList.add("hidden");
+
+      successPage.classList.remove("hidden");
+
+      loggedInEmail.textContent =
+        user.email ||
+        user.displayName ||
+        "Authenticated user";
     }
 
 
-    try {
+    /* =================================================
+       EMAIL + PASSWORD LOGIN
+    ================================================= */
 
-      loginButton.disabled = true;
-
-      loginButton.textContent =
-        "Logging in...";
-
-
-      const result =
-        await signInWithEmailAndPassword(
-          auth,
-          email,
-          userPassword
-        );
-
-
-      console.log(
-        "Logged in:",
-        result.user.uid
-      );
-
-
-      showMessage(
-        "Login successful!",
-        true
-      );
-
+    async function attemptLogin() {
 
       /*
-       * When you create dashboard.html,
-       * uncomment this:
-
-       window.location.href =
-         "dashboard.html";
-      */
-
-
-    } catch (error) {
-
-      console.error(
-        "Login error:",
-        error
-      );
-
-
-      if (
-        error.code ===
-        "auth/invalid-credential"
-      ) {
-
-        showMessage(
-          "Invalid email or password."
-        );
-
-      } else {
-
-        showMessage(
-          "Login error: " +
-          error.code
-        );
-      }
-
-    } finally {
-
-      loginButton.disabled = false;
-
-      loginButton.textContent =
-        "Login";
-    }
-  }
-
-
-  /* =====================================================
-     GOOGLE LOGIN
-  ===================================================== */
-
-  async function googleLogin() {
-
-    try {
-
-      googleButton.disabled = true;
-
-      googleButton.textContent =
-        "Opening Google...";
-
-
-      const provider =
-        new GoogleAuthProvider();
-
-
-      provider.setCustomParameters({
-        prompt: "select_account"
-      });
-
-
-      /*
-       * Redirect to Google.
+       * If Google authentication has already
+       * succeeded, the Login button simply
+       * completes the login flow.
        */
 
-      await signInWithRedirect(
-        auth,
-        provider
-      );
+      if (googleAuthenticated) {
+
+        const user =
+          auth.currentUser;
+
+        if (user) {
+
+          showSuccessPage(user);
+
+          return;
+        }
+      }
 
 
-    } catch (error) {
+      const email =
+        username.value.trim();
 
-      console.error(
-        "Google error:",
-        error
-      );
-
-
-      showMessage(
-        "Google error: " +
-        error.code
-      );
+      const userPassword =
+        password.value;
 
 
-      googleButton.disabled = false;
+      if (!email) {
 
-      googleButton.textContent =
-        "🔵 Continue with Google";
-    }
-  }
+        showMessage(
+          "Please enter your email."
+        );
 
-
-  /* =====================================================
-     HANDLE GOOGLE REDIRECT
-  ===================================================== */
-
-  async function handleGoogleRedirect() {
-
-    try {
-
-      const result =
-        await getRedirectResult(auth);
-
-
-      if (!result) {
         return;
       }
 
 
-      const user =
-        result.user;
-
-
-      /*
-       * We can display the Google email.
-
-       * The Google password is NEVER
-       * accessible to this website.
-       */
-
-      username.value =
-        user.email || "";
-
-      password.value = "";
-
-
-      console.log(
-        "Google user:",
-        user
-      );
-
-
-      showMessage(
-        "Google login successful!",
-        true
-      );
-
-
-      /*
-       * Redirect to dashboard here:
-
-       window.location.href =
-         "dashboard.html";
-      */
-
-
-    } catch (error) {
-
-      console.error(
-        "Google redirect error:",
-        error
-      );
-
-
-      if (
-        error.code ===
-        "auth/unauthorized-domain"
-      ) {
+      if (!userPassword) {
 
         showMessage(
-          "Domain is not authorized in Firebase."
+          "Please enter your password."
         );
 
+        return;
       }
 
-      else if (
-        error.code ===
-        "auth/operation-not-allowed"
-      ) {
+
+      try {
+
+        loginButton.disabled = true;
+
+        loginButton.textContent =
+          "Checking...";
+
+
+        const result =
+          await signInWithEmailAndPassword(
+            auth,
+            email,
+            userPassword
+          );
+
+
+        showSuccessPage(
+          result.user
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
+
+
+        if (
+          error.code ===
+          "auth/invalid-credential"
+        ) {
+
+          showMessage(
+            "Invalid email or password."
+          );
+
+        } else {
+
+          showMessage(
+            "Login error: " +
+            error.code
+          );
+        }
+
+      } finally {
+
+        loginButton.disabled = false;
+
+        loginButton.textContent =
+          "Login";
+      }
+    }
+
+
+    /* =================================================
+       GOOGLE LOGIN
+    ================================================= */
+
+    async function googleLogin() {
+
+      try {
+
+        googleButton.disabled = true;
+
+        googleButton.textContent =
+          "Opening Google...";
+
+
+        const provider =
+          new GoogleAuthProvider();
+
+
+        provider.setCustomParameters({
+          prompt: "select_account"
+        });
+
+
+        /*
+         * Google authentication happens here.
+         *
+         * After returning from Google,
+         * handleGoogleRedirect() will fill
+         * the email field.
+         */
+
+        await signInWithRedirect(
+          auth,
+          provider
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Google error:",
+          error
+        );
 
         showMessage(
-          "Google Sign-In is not enabled."
+          "Google error: " +
+          error.code
         );
 
-      }
+        googleButton.disabled =
+          false;
 
-      else {
+        googleButton.textContent =
+          "🔵 Continue with Google";
+      }
+    }
+
+
+    /* =================================================
+       HANDLE GOOGLE RETURN
+    ================================================= */
+
+    async function handleGoogleRedirect() {
+
+      try {
+
+        const result =
+          await getRedirectResult(auth);
+
+
+        if (!result) {
+          return;
+        }
+
+
+        const user =
+          result.user;
+
+
+        /*
+         * Fill the email field.
+         */
+
+        username.value =
+          user.email || "";
+
+
+        /*
+         * Google password is intentionally
+         * NOT filled.
+         */
+
+        password.value = "";
+
+
+        /*
+         * Remember that Google authentication
+         * has already succeeded.
+         */
+
+        googleAuthenticated = true;
+
+
+        showMessage(
+          "Google verified. Now click Login.",
+          true
+        );
+
+
+        /*
+         * The page stays on the login screen.
+         *
+         * The user must click Login.
+         */
+
+        loginButton.textContent =
+          "Login";
+
+
+      } catch (error) {
+
+        console.error(
+          "Google redirect error:",
+          error
+        );
+
 
         showMessage(
           "Google error: " +
@@ -609,89 +725,144 @@
         );
       }
     }
-  }
 
 
-  /* =====================================================
-     PASSWORD SHOW / HIDE
-  ===================================================== */
+    /* =================================================
+       LOGOUT
+    ================================================= */
 
-  togglePassword.addEventListener(
-    "click",
-    () => {
+    async function logout() {
 
-      if (
-        password.type ===
-        "password"
-      ) {
+      try {
 
-        password.type = "text";
+        await signOut(auth);
 
-        togglePassword.textContent =
-          "🙈";
 
-      } else {
+        googleAuthenticated =
+          false;
 
-        password.type = "password";
 
-        togglePassword.textContent =
-          "👁️";
+        username.value = "";
+
+        password.value = "";
+
+
+        successPage.classList.add(
+          "hidden"
+        );
+
+        loginPage.classList.remove(
+          "hidden"
+        );
+
+
+        showMessage(
+          "You have been logged out.",
+          true
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
       }
     }
-  );
 
 
-  /* =====================================================
-     BUTTON EVENTS
-  ===================================================== */
+    /* =================================================
+       PASSWORD SHOW / HIDE
+    ================================================= */
 
-  loginButton.addEventListener(
-    "click",
-    attemptLogin
-  );
+    togglePassword.addEventListener(
+      "click",
+      () => {
 
+        if (
+          password.type ===
+          "password"
+        ) {
 
-  googleButton.addEventListener(
-    "click",
-    googleLogin
-  );
+          password.type = "text";
 
+          togglePassword.textContent =
+            "🙈";
 
-  /* =====================================================
-     ENTER KEY
-  ===================================================== */
+        } else {
 
-  username.addEventListener(
-    "keydown",
-    event => {
+          password.type =
+            "password";
 
-      if (event.key === "Enter") {
+          togglePassword.textContent =
+            "👁️";
+        }
 
-        attemptLogin();
       }
-    }
-  );
+    );
 
 
-  password.addEventListener(
-    "keydown",
-    event => {
+    /* =================================================
+       BUTTONS
+    ================================================= */
 
-      if (event.key === "Enter") {
+    loginButton.addEventListener(
+      "click",
+      attemptLogin
+    );
 
-        attemptLogin();
+
+    googleButton.addEventListener(
+      "click",
+      googleLogin
+    );
+
+
+    logoutButton.addEventListener(
+      "click",
+      logout
+    );
+
+
+    /* =================================================
+       ENTER KEY
+    ================================================= */
+
+    username.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Enter"
+        ) {
+
+          attemptLogin();
+        }
       }
-    }
-  );
+    );
 
 
-  /* =====================================================
-     CHECK GOOGLE REDIRECT
-  ===================================================== */
+    password.addEventListener(
+      "keydown",
+      event => {
 
-  handleGoogleRedirect();
+        if (
+          event.key === "Enter"
+        ) {
 
-</script>
+          attemptLogin();
+        }
+      }
+    );
+
+
+    /* =================================================
+       CHECK GOOGLE REDIRECT
+    ================================================= */
+
+    handleGoogleRedirect();
+
+  </script>
 
 </body>
 </html>
