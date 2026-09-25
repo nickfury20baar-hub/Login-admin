@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Login</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .login-box {
+      width: 320px;
+      padding: 25px;
+      background: #222;
+      border-radius: 15px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    #loginBtn {
+      background: #4285f4;
+      color: white;
+    }
+
+    #googleBtn {
+      background: white;
+      color: black;
+    }
+
+    #message {
+      text-align: center;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="login-box">
+
+  <h2>Login</h2>
+
+  <input
+    id="username"
+    type="email"
+    placeholder="Enter email"
+    autocomplete="username"
+  >
+
+  <input
+    id="password"
+    type="password"
+    placeholder="Enter password"
+    autocomplete="current-password"
+  >
+
+  <button id="loginBtn">
+    Login
+  </button>
+
+  <button id="googleBtn">
+    Continue with Google
+  </button>
+
+  <div id="message"></div>
+
+</div>
+
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithRedirect,
+  getRedirectResult
+}
+from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+
+/* =========================
+   FIREBASE CONFIG
+========================= */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCcwr6vNVpoQ0Tdl8OfBM8E2MvDmwKQ3BQ",
+  authDomain: "login-project-a90bc.firebaseapp.com",
+  databaseURL: "https://login-project-a90bc-default-rtdb.firebaseio.com",
+  projectId: "login-project-a90bc",
+  storageBucket: "login-project-a90bc.firebasestorage.app",
+  messagingSenderId: "86568965871",
+  appId: "1:86568965871:web:e000bcfe034bdce1202d1a"
+};
+
+
+/* =========================
+   INITIALIZE FIREBASE
+========================= */
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const username = document.getElementById("username");
+const password = document.getElementById("password");
+
+const loginBtn = document.getElementById("loginBtn");
+const googleBtn = document.getElementById("googleBtn");
+
+const message = document.getElementById("message");
+
+
+/*
+   This is VERY IMPORTANT.
+
+   After Google redirect, the browser reloads login.html.
+   We store this flag so we know that the Google flow
+   has already happened.
+*/
+
+const GOOGLE_LOGIN_KEY = "google_login_verified";
+
+
+/* =========================
+   SHOW MESSAGE
+========================= */
+
+function showMessage(text, success = false) {
+
+  message.textContent = text;
+
+  message.style.color =
+    success ? "lightgreen" : "#ff5555";
+}
+
+
+/* =========================
+   GOOGLE LOGIN
+========================= */
+
+googleBtn.addEventListener("click", async () => {
+
+  try {
+
+    const provider = new GoogleAuthProvider();
+
+    provider.setCustomParameters({
+      prompt: "select_account"
+    });
+
+    await signInWithRedirect(auth, provider);
+
+  } catch (error) {
+
+    console.error(error);
+
+    showMessage(
+      "Google login failed: " + error.message
+    );
+
+  }
+
+});
+
+
+/* =========================
+   CHECK GOOGLE REDIRECT
+========================= */
+
+try {
+
+  const result = await getRedirectResult(auth);
+
+  if (result && result.user) {
+
+    const user = result.user;
+
+    console.log("Google user:", user);
+
+    /*
+      Fill the email address.
+    */
+
+    username.value = user.email || "";
+
+    /*
+      NEVER fill Google's password.
+    */
+
+    password.value = "";
+
+    /*
+      Remember that Google authentication
+      has already happened.
+    */
+
+    sessionStorage.setItem(
+      GOOGLE_LOGIN_KEY,
+      "true"
+    );
+
+    showMessage(
+      "Google account verified. Click Login.",
+      true
+    );
+  }
+
+} catch (error) {
+
+  console.error("Redirect error:", error);
+
+  showMessage(
+    "Google authentication error: " + error.message
+  );
+
+}
+
+
+/* =========================
+   LOGIN BUTTON
+========================= */
+
+loginBtn.addEventListener("click", async () => {
+
+  const email = username.value.trim();
+  const userPassword = password.value;
+
+  /*
+     FIRST:
+     Check whether Google authentication
+     was already completed.
+  */
+
+  const googleVerified =
+    sessionStorage.getItem(GOOGLE_LOGIN_KEY) === "true";
+
+
+  if (googleVerified) {
+
+    /*
+       The Google authentication is already
+       stored by Firebase.
+
+       The user now clicked the Login button,
+       so redirect to index.html.
+    */
+
+    sessionStorage.removeItem(GOOGLE_LOGIN_KEY);
+
+    window.location.href = "index.html";
+
+    return;
+  }
+
+
+  /* =========================
+     NORMAL EMAIL/PASSWORD LOGIN
+  ========================= */
+
+  if (!email) {
+
+    showMessage("Please enter your email.");
+
+    return;
+  }
+
+  if (!userPassword) {
+
+    showMessage("Please enter your password.");
+
+    return;
+  }
+
+
+  try {
+
+    showMessage("Logging in...", true);
+
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      userPassword
+    );
+
+    /*
+       Successful Firebase login
+    */
+
+    window.location.href = "index.html";
+
+  } catch (error) {
+
+    console.error(error);
+
+    if (error.code === "auth/invalid-credential") {
+
+      showMessage("Wrong email or password.");
+
+    } else if (error.code === "auth/user-not-found") {
+
+      showMessage("Account does not exist.");
+
+    } else if (error.code === "auth/wrong-password") {
+
+      showMessage("Wrong password.");
+
+    } else {
+
+      showMessage(error.message);
+
+    }
+
+  }
+
+});
+
+</script>
+
+</body>
+</html>
