@@ -1,401 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Games Arcade — Music • Snap • Study • Leaderboard</title>
-<style>
-  :root{
-    --accent:#00b4d8;
-    --accent-dark:#0096c7;
-    --card-bg: rgba(18,18,20,0.92);
-  }
-  html,body{height:100%;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);color:#eef;}
-  #particles{position:fixed;inset:0;pointer-events:none;z-index:1}
-  #muteBtn{position:fixed;top:14px;right:14px;width:46px;height:46px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-size:20px;cursor:pointer;z-index:8;box-shadow:0 0 10px var(--accent)}
-  .card{width:100%;max-width:1100px;max-height:90vh;margin:28px auto;background:var(--card-bg);border-radius:12px;padding:14px;box-shadow:0 12px 40px rgba(0,0,0,0.6);overflow:auto;position:relative;z-index:2}
-  h1,h2,h3{margin:6px 0;color:#e6f7fb}
-  input,button,select,textarea{font-family:inherit}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
 
-  /* Sticky Tabs Header */
-  .tabs-header{display:flex;gap:8px;align-items:center;position:sticky;top:0;background:linear-gradient(180deg, rgba(20,20,20,0.96), rgba(20,20,20,0.92));padding:10px;border-radius:10px;z-index:6;box-shadow:0 6px 18px rgba(0,0,0,0.45);margin-bottom:10px}
-  .title{flex:0 0 auto;margin-right:6px}
-  .tabs{display:flex;gap:6px;flex:1;min-width:0}
-  .tab-btn{flex:1;padding:9px 12px;border-radius:8px;border:none;background:transparent;color:#e8fbff;cursor:pointer;font-weight:600}
-  .tab-btn.active{background:var(--accent-dark);box-shadow:0 6px 12px rgba(0,0,0,0.45)}
-  .tab-content{padding:12px 0}
-  .tab-content.hidden{display:none}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-  /* Games grid & items */
-  .games-top{display:flex;gap:8px;align-items:center;margin-bottom:10px}
-  .search{flex:1;padding:8px;border-radius:8px;border:none;background:rgba(255,255,255,0.03);color:#fff}
-  .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-  .game-card{background:rgba(255,255,255,0.03);padding:8px;border-radius:8px;display:flex;flex-direction:column;align-items:stretch;min-height:220px}
-  .game-thumb{width:100%;height:120px;object-fit:cover;border-radius:6px;background:#111}
-  .game-title{margin:8px 0 6px;font-weight:700;color:#e8fbff}
-  .game-meta{font-size:12px;color:#cfeff7;margin-bottom:8px}
-  .play-now{padding:8px;border-radius:8px;border:none;background:var(--accent);color:#022;cursor:pointer;font-weight:700}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background: #f2f4f7;
+    }
 
-  /* Selected game / iframe area */
-  #gameArea{margin-top:14px}
-  #gameIframe{width:100%;height:520px;border-radius:10px;border:none;background:#000}
-  #iframeNotice{margin-top:8px;color:#ffd9d9}
+    .login-box {
+      width: 90%;
+      max-width: 380px;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+    }
 
-  /* Music */
-  .music-list{display:flex;flex-direction:column;gap:10px}
-  .track{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,0.03);padding:10px;border-radius:8px}
-  .track .meta{flex:1;text-align:left}
-  .playbtn{padding:8px 12px;border-radius:8px;border:none;background:var(--accent);color:#022;cursor:pointer;font-weight:700}
-  .playbtn.paused{background:#444;color:#e6f7fb}
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #222;
+    }
 
-  /* Snap */
-  #camera{width:100%;max-height:480px;border-radius:10px;background:#000;display:block}
-  #snapshot{width:100%;border-radius:10px;margin-top:10px;display:none}
-  .snap-controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 7px;
+      font-size: 15px;
+      outline: none;
+    }
 
-  /* Study */
-  .study-list{display:flex;flex-direction:column;gap:10px}
-  .study-card{background:rgba(255,255,255,0.03);padding:12px;border-radius:8px}
-  .study-card a{color:var(--accent);text-decoration:none;font-weight:700}
+    input:focus {
+      border-color: #007bff;
+    }
 
-  /* Leaderboard */
-  #leaderboard{margin-top:14px;background:#071019;padding:10px;border-radius:8px;max-height:180px;overflow:auto}
-  #leaderboard h3{margin:0 0 8px;color:var(--accent)}
-  #leaderboard ol{margin:0;padding-left:18px}
-  #leaderboard li{color:#d6f7ff;margin:6px 0}
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 7px;
+      background: #007bff;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
 
-  /* Buttons */
-  .btn{padding:8px 12px;border-radius:8px;border:none;background:var(--accent);color:#022;cursor:pointer}
-  .back-btn{background:#ff5566;color:#fff}
+    .login-btn:hover {
+      background: #0069d9;
+    }
 
-  @media (max-width:720px){
-    .games-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
-    #gameIframe{height:420px}
-    .tabs-header{flex-direction:column;align-items:stretch}
-  }
-</style>
+    /* Success Popup */
+    .popup {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .popup-box {
+      width: 90%;
+      max-width: 350px;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+
+    .success-icon {
+      font-size: 45px;
+      color: #28a745;
+      margin-bottom: 10px;
+    }
+
+    .popup-box h3 {
+      margin: 5px 0 10px;
+      color: #222;
+    }
+
+    .popup-box p {
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .close-btn {
+      padding: 10px 25px;
+      border: none;
+      border-radius: 6px;
+      background: #28a745;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+    }
+  </style>
 </head>
+
 <body>
-<canvas id="particles"></canvas>
-<button id="muteBtn" title="Toggle Music">🔇</button>
 
-<!-- Login card -->
-<div class="card" id="loginForm">
-  <h2>🔐 Secure Login</h2>
-  <input id="username" placeholder="Enter email or mobile" style="margin-top:8px;padding:10px;border-radius:8px;border:none" />
-  <input id="password" type="password" placeholder="Enter password" style="margin-top:8px;padding:10px;border-radius:8px;border:none" />
-  <div style="display:flex;gap:8px;margin-top:12px">
-    <button class="btn" onclick="attemptLogin()">Login</button>
-    <button class="btn" onclick="fillDemo()">Demo</button>
-  </div>
-</div>
+  <div class="login-box">
+    <h2>Login</h2>
 
-<!-- Thank you card -->
-<div class="card" id="thankYouScreen" style="display:none">
-  <h2 id="welcomeMsg">Welcome</h2>
-  <p id="countdown">Opening...</p>
-</div>
+    <input
+      type="text"
+      id="username"
+      placeholder="Email or Mobile"
+    >
 
-<!-- Main hub card -->
-<div class="card" id="gamesPage" style="display:none">
-  <div class="tabs-header">
-    <div class="title"><h2 style="margin:0">✨ Fun & Learning Hub</h2></div>
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="gamesTab" onclick="showTab('gamesTab', this)">🎮 Games</button>
-      <button class="tab-btn" data-tab="musicTab" onclick="showTab('musicTab', this)">🎵 Music</button>
-      <button class="tab-btn" data-tab="snapTab" onclick="showTab('snapTab', this)">📸 Snap</button>
-      <button class="tab-btn" data-tab="studyTab" onclick="showTab('studyTab', this)">📚 Study</button>
-    </div>
+    <input
+      type="password"
+      id="password"
+      placeholder="Password"
+    >
+
+    <button class="login-btn" onclick="attemptLogin()">
+      Login
+    </button>
   </div>
 
-  <!-- GAMES TAB -->
-  <div id="gamesTab" class="tab-content">
-    <div class="games-top">
-      <input id="searchGame" class="search" placeholder="🔍 Search games..." oninput="filterGames()" />
-      <button class="btn" onclick="shuffleGames()" title="Shuffle list">🔀</button>
-    </div>
-
-    <div class="games-grid" id="gameList">
-      <!-- We'll list 22 games. Most use gamedistribution embeddable links; thumbnails are provided when possible. -->
-      <!-- 1 -->
-      <div class="game-card" data-name="knife hit">
-        <img class="game-thumb" src="https://img.gamedistribution.com/8ba06ecae33f49a9b2d1d3255ee69d44-512x384.jpg" alt="">
-        <div class="game-title">Knife Hit</div>
-        <div class="game-meta">Arcade • Throw knives</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/8ba06ecae33f49a9b2d1d3255ee69d44/','Knife Hit')">Play Now</button>
-      </div>
-
-      <!-- 2 -->
-      <div class="game-card" data-name="bubble shooter">
-        <img class="game-thumb" src="https://img.gamedistribution.com/14b9cd4ff55b4d2f9d5c928e10a1f4c2-512x384.jpg" alt="">
-        <div class="game-title">Bubble Shooter</div>
-        <div class="game-meta">Puzzle • Pop bubbles</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/14b9cd4ff55b4d2f9d5c928e10a1f4c2/','Bubble Shooter')">Play Now</button>
-      </div>
-
-      <!-- 3 -->
-      <div class="game-card" data-name="car racing">
-        <img class="game-thumb" src="https://img.gamedistribution.com/7b7f0d02ad9b44c2831c4259b3a6efed-512x384.jpg" alt="">
-        <div class="game-title">Car Racing</div>
-        <div class="game-meta">Racing • Speed</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/7b7f0d02ad9b44c2831c4259b3a6efed/','Car Racing')">Play Now</button>
-      </div>
-
-      <!-- 4 -->
-      <div class="game-card" data-name="stack tower">
-        <img class="game-thumb" src="https://img.gamedistribution.com/567d6c404e8e42aab04d308b5c2736b3-512x384.jpg" alt="">
-        <div class="game-title">Stack Tower</div>
-        <div class="game-meta">Casual • Stack blocks</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/567d6c404e8e42aab04d308b5c2736b3/','Stack Tower')">Play Now</button>
-      </div>
-
-      <!-- 5 -->
-      <div class="game-card" data-name="tic tac toe">
-        <img class="game-thumb" src="https://img.gamedistribution.com/fef40b9a6d924edeb6d8f1d59e5a9e75-512x384.jpg" alt="">
-        <div class="game-title">Tic Tac Toe</div>
-        <div class="game-meta">Classic • 2-player</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/fef40b9a6d924edeb6d8f1d59e5a9e75/','Tic Tac Toe')">Play Now</button>
-      </div>
-
-      <!-- 6 -->
-      <div class="game-card" data-name="2048">
-        <img class="game-thumb" src="https://img.gamedistribution.com/6b620b091f1c4df9acb3016238a2e8f0-512x384.jpg" alt="">
-        <div class="game-title">2048</div>
-        <div class="game-meta">Puzzle • Numbers</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/6b620b091f1c4df9acb3016238a2e8f0/','2048')">Play Now</button>
-      </div>
-
-      <!-- 7 -->
-      <div class="game-card" data-name="sudoku">
-        <img class="game-thumb" src="https://img.gamedistribution.com/574c57ee0b92443a96ad1f3bf1e7c038-512x384.jpg" alt="">
-        <div class="game-title">Sudoku</div>
-        <div class="game-meta">Logic • Puzzles</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/574c57ee0b92443a96ad1f3bf1e7c038/','Sudoku')">Play Now</button>
-      </div>
-
-      <!-- 8 -->
-      <div class="game-card" data-name="chess">
-        <img class="game-thumb" src="https://img.gamedistribution.com/91e2cdbff7034e6fbcadfd1a9d417d0d-512x384.jpg" alt="">
-        <div class="game-title">Chess</div>
-        <div class="game-meta">Strategy</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/91e2cdbff7034e6fbcadfd1a9d417d0d/','Chess')">Play Now</button>
-      </div>
-
-      <!-- 9 -->
-      <div class="game-card" data-name="ludo">
-        <img class="game-thumb" src="https://img.gamedistribution.com/68d3c79e1b1843da8b21ac2c830c069d-512x384.jpg" alt="">
-        <div class="game-title">Ludo</div>
-        <div class="game-meta">Board • Multiplayer</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/68d3c79e1b1843da8b21ac2c830c069d/','Ludo')">Play Now</button>
-      </div>
-
-      <!-- 10 -->
-      <div class="game-card" data-name="snakes and ladders">
-        <img class="game-thumb" src="https://img.gamedistribution.com/3518a71b4b4a43aa97b0b7aa53c07b6f-512x384.jpg" alt="">
-        <div class="game-title">Snakes & Ladders</div>
-        <div class="game-meta">Board Game</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/3518a71b4b4a43aa97b0b7aa53c07b6f/','Snakes & Ladders')">Play Now</button>
-      </div>
-
-      <!-- 11 -->
-      <div class="game-card" data-name="fruit match 3">
-        <img class="game-thumb" src="https://via.placeholder.com/512x384.png?text=Fruit+Match" alt="">
-        <div class="game-title">Fruit Match 3</div>
-        <div class="game-meta">Match-3</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/8a5b1f1a1d4b4e8e8f3b/','Fruit Match 3')">Play Now</button>
-      </div>
-
-      <!-- 12 -->
-      <div class="game-card" data-name="platform jumper">
-        <img class="game-thumb" src="https://via.placeholder.com/512x384.png?text=Platform+Jumper" alt="">
-        <div class="game-title">Platform Jumper</div>
-        <div class="game-meta">Platformer</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/33d2a4b9f5b94f018f24/','Platform Jumper')">Play Now</button>
-      </div>
-
-      <!-- 13 -->
-      <div class="game-card" data-name="space shooter">
-        <img class="game-thumb" src="https://via.placeholder.com/512x384.png?text=Space+Shooter" alt="">
-        <div class="game-title">Space Shooter</div>
-        <div class="game-meta">Shooter</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/space-shooter/','Space Shooter')">Play Now</button>
-      </div>
-
-      <!-- 14 -->
-      <div class="game-card" data-name="endless runner">
-        <img class="game-thumb" src="https://via.placeholder.com/512x384.png?text=Endless+Runner" alt="">
-        <div class="game-title">Endless Runner</div>
-        <div class="game-meta">Runner</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/endless-runner/','Endless Runner')">Play Now</button>
-      </div>
-
-      <!-- 15 -->
-      <div class="game-card" data-name="word scramble">
-        <img class="game-thumb" src="https://via.placeholder.com/512x384.png?text=Word+Scramble" alt="">
-        <div class="game-title">Word Scramble</div>
-        <div class="game-meta">Word • Educational</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/word-scramble/','Word Scramble')">Play Now</button>
-      </div>
-
-      <!-- 16 -->
-      <div class="game-card" data-name="mahjong">
-        <img class="game-thumb" src="https://via.placeholder.com/512x384.png?text=Mahjong" alt="">
-        <div class="game-title">Mahjong</div>
-        <div class="game-meta">Tile puzzle</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/mahjong/','Mahjong')">Play Now</button>
-      </div>
-
-      <!-- 17 -->
-      <div class="game-card" data-name="memory match">
-        <img class="game-thumb" src="https://via.placeholder.com/512x384.png?text=Memory+Match" alt="">
-        <div class="game-title">Memory Match</div>
-        <div class="game-meta">Memory game</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/memory-match/','Memory Match')">Play Now</button>
-      </div>
-
-      <!-- 18 -->
-      <div class="game-card" data-name="puzzle blocks">
-        <img class="game-thumb" src="https://via.placeholder.com/512x384.png?text=Puzzle+Blocks" alt="">
-        <div class="game-title">Puzzle Blocks</div>
-        <div class="game-meta">Block puzzle</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/puzzle-blocks/','Puzzle Blocks')">Play Now</button>
-      </div>
-
-      <!-- 19 -->
-      <div class="game-card" data-name="soccer kicks">
-        <img class="game-thumb" src="https://via.placeholder.com/512x384.png?text=Soccer+Kicks" alt="">
-        <div class="game-title">Soccer Kicks</div>
-        <div class="game-meta">Sports</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/soccer-kicks/','Soccer Kicks')">Play Now</button>
-      </div>
-
-      <!-- 20 -->
-      <div class="game-card" data-name="connect 4">
-        <img class="game-thumb" src="https://via.placeholder.com/512x384.png?text=Connect+4" alt="">
-        <div class="game-title">Connect 4</div>
-        <div class="game-meta">Board • Strategy</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/connect4/','Connect 4')">Play Now</button>
-      </div>
-
-      <!-- 21 -->
-      <div class="game-card" data-name="bubble pop">
-        <img class="game-thumb" src="https://via.placeholder.com/512x384.png?text=Bubble+Pop" alt="">
-        <div class="game-title">Bubble Pop</div>
-        <div class="game-meta">Casual popping</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/bubble-pop/','Bubble Pop')">Play Now</button>
-      </div>
-
-      <!-- 22 -->
-      <div class="game-card" data-name="city builder">
-        <img class="game-thumb" src="https://via.placeholder.com/512x384.png?text=City+Builder" alt="">
-        <div class="game-title">City Builder</div>
-        <div class="game-meta">Strategy • Build</div>
-        <button class="play-now" onclick="selectGame('https://html5.gamedistribution.com/city-builder/','City Builder')">Play Now</button>
-      </div>
-
-    </div>
-
-    <!-- selected game iframe area -->
-    <div id="gameArea" style="display:none">
-      <h3 id="selectedTitle" style="margin-top:12px;color:#fff"></h3>
-      <iframe id="gameIframe" src="" sandbox="allow-forms allow-scripts allow-same-origin allow-popups"></iframe>
-      <div id="iframeNotice" style="display:block"></div>
-      <div style="margin-top:8px;">
-        <button class="back-btn" onclick="closeGame()">⬅ Back to Games</button>
-      </div>
-    </div>
-
-    <!-- Leaderboard -->
-    <div id="leaderboard">
-      <h3>🏆 Leaderboard</h3>
-      <ol id="leaderboardList"><li>Loading...</li></ol>
-      <div id="profileInput" style="display:none;margin-top:8px;gap:8px;display:flex">
-        <input id="profileName" placeholder="Enter your name" />
-        <button class="btn" onclick="submitScore()">Submit Score</button>
-      </div>
+  <!-- Success Popup -->
+  <div class="popup" id="successPopup">
+    <div class="popup-box">
+      <div class="success-icon">✓</div>
+      <h3>Login Successful</h3>
+      <p>You have successfully logged in.</p>
+      <button class="close-btn" onclick="closePopup()">
+        Continue
+      </button>
     </div>
   </div>
 
-  <!-- MUSIC TAB -->
-  <div id="musicTab" class="tab-content hidden">
-    <h3>🎵 Music Player</h3>
-    <p style="color:#cfeff7;margin:4px 0 10px">Only one track will play at a time. Click Play to start / Pause to stop.</p>
-    <div class="music-list">
-      <div class="track" data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
-        <button class="playbtn" onclick="toggleTrack(this)">Play</button>
-        <div class="meta">
-          <div><strong>SoundHelix Song 1</strong></div>
-          <div style="font-size:12px;color:#cfeff7">Example MP3 • SoundHelix</div>
-        </div>
-      </div>
+  <script>
+    function attemptLogin() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
 
-      <div class="track" data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">
-        <button class="playbtn" onclick="toggleTrack(this)">Play</button>
-        <div class="meta">
-          <div><strong>SoundHelix Song 2</strong></div>
-          <div style="font-size:12px;color:#cfeff7">Example MP3 • SoundHelix</div>
-        </div>
-      </div>
+      if (username === "" || password === "") {
+        alert("Please enter username and password.");
+        return;
+      }
 
-      <div class="track" data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3">
-        <button class="playbtn" onclick="toggleTrack(this)">Play</button>
-        <div class="meta">
-          <div><strong>SoundHelix Song 3</strong></div>
-          <div style="font-size:12px;color:#cfeff7">Example MP3 • SoundHelix</div>
-        </div>
-      </div>
-    </div>
-  </div>
+      document.getElementById("successPopup").style.display = "flex";
+    }
 
-  <!-- SNAP TAB -->
-  <div id="snapTab" class="tab-content hidden">
-    <h3>📸 Camera Snap</h3>
-    <video id="camera" autoplay playsinline></video>
-    <div class="snap-controls">
-      <button class="btn" onclick="takeSnap()">📷 Capture</button>
-      <button class="btn" onclick="downloadSnap()">⬇ Download</button>
-      <button class="btn" id="stopCamBtn" onclick="stopCamera()">⏹ Stop Camera</button>
-    </div>
-    <canvas id="snapshot"></canvas>
-    <p style="color:#ffd9d9;margin-top:8px;font-size:13px">Note: Camera requires HTTPS or localhost. Allow camera permission when prompted.</p>
-  </div>
+    function closePopup() {
+      document.getElementById("successPopup").style.display = "none";
+    }
+  </script>
 
-  <!-- STUDY TAB -->
-  <div id="studyTab" class="tab-content hidden">
-    <h3>📚 Study Resources</h3>
-    <div class="study-list">
-      <div class="study-card">
-        <strong>Quick Notes: HTML & CSS</strong>
-        <p style="margin:6px 0;color:#d6f7ff">HTML structure: &lt;!doctype&gt; &lt;html&gt; &lt;head&gt; &lt;body&gt;. Use semantic tags: &lt;header&gt;, &lt;main&gt;, &lt;footer&gt;. CSS basics: selectors, box model, flexbox, grid.</p>
-      </div>
-      <div class="study-card">
-        <strong>Free PDF: Intro to Web Dev</strong>
-        <p style="margin:6px 0"><a href="https://openstax.org/subjects/computer-science" target="_blank">OpenStax — Computer Science / Web resources</a></p>
-      </div>
-      <div class="study-card">
-        <strong>Video Lesson: HTML Crash Course</strong>
-        <div style="position:relative;padding-top:56.25%;border-radius:8px;overflow:hidden;background:#000;margin-top:8px">
-          <iframe src="https://www.youtube.com/embed/UB1O30fR-EE" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen></iframe>
-        </div>
-      </div>
-      <div class="study-card">
-        <strong>Helpful links</strong>
-        <ul style="margin:6px 0 0 18px">
-          <li><a href="https://www.khanacademy.org" target="_blank">Khan Academy</a></li>
-          <li><a href="https://www.coursera.org" target="_blank">Coursera</a></li>
-          <li><a href="https://www.w3schools.com" target="_blank">W3Schools</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- Firebase SDKs (kept from your file) -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
-<script src="script.js">
-</script>
 </body>
 </html>
